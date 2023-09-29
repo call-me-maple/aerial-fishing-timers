@@ -15,7 +15,7 @@ public interface AerialFishingTimersConfig extends Config
 	@ConfigItem(
 		keyName = "circleSize",
 		name = "Circle Size",
-		description = "How big to make the overlay's circle indicators",
+		description = "How big to make the circular timers",
 		position = 1
 	)
 	default int getCircleSize()
@@ -27,7 +27,7 @@ public interface AerialFishingTimersConfig extends Config
 	@ConfigItem(
 			keyName = "warningThreshold",
 			name = "Warning Threshold",
-			description = "How many ticks before the RNG expiration phase should the circle turn the warning color (0 for no warning)",
+			description = "Adds a warning phase X ticks before the final RNG expiration phase (0 to turn off)",
 			position = 2
 	)
 	default int getWarningThreshold()
@@ -44,7 +44,7 @@ public interface AerialFishingTimersConfig extends Config
 	@ConfigItem(
 			keyName = "availableColor",
 			name = "Available Color",
-			description = "What color should the circle be when the spot cannot expire",
+			description = "Color of the circle when the spot cannot expire",
 			position = 4,
 			section = colors
 	)
@@ -56,7 +56,7 @@ public interface AerialFishingTimersConfig extends Config
 	@ConfigItem(
 			keyName = "warningColor",
 			name = "Warning Color",
-			description = "What color should the circle turn right before the RNG expiration phase",
+			description = "Color of the circle right before the RNG expiration phase",
 			position = 5,
 			section = colors
 	)
@@ -68,7 +68,7 @@ public interface AerialFishingTimersConfig extends Config
 	@ConfigItem(
 			keyName = "expiringColor",
 			name = "Expiring Color",
-			description = "What color should the circle turn when the spot can expire at any time",
+			description = "Color of the circle when the spot may expire at any moment",
 			position = 6,
 			section = colors
 	)
