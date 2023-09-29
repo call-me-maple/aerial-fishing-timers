@@ -1,5 +1,6 @@
 # Aerial Fishing Timers
 Add timers to indicate when aerial fishing spots will expire. Aerial fishing spots will stay active anywhere between 10 and 19 ticks.
+
 ![java_KaY4wy04se](https://github.com/call-me-maple/aerial-fishing-timers/assets/85463994/6b9d7c00-241c-4a7f-831f-d7908d56faf7)
 
 # Settings
