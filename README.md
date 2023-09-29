@@ -5,7 +5,7 @@ Add timers to indicate when aerial fishing spots will expire. Aerial fishing spo
 
 # Settings
 #### Circle Size
-Used to change how big the circle indicator will be rendered.
+Used to change how big the circle timer will be displayed.
 > default: 22
 
 > range: 1-50
