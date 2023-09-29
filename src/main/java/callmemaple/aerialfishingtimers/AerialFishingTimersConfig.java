@@ -57,7 +57,7 @@ public interface AerialFishingTimersConfig extends Config
 	@ConfigItem(
 			keyName = "warningColor",
 			name = "Warning Color",
-			description = "What color should the circle turn to warn before the RNG expiring portion",
+			description = "What color should the circle turn right before the RNG expiration phase",
 			position = 5,
 			section = colors
 	)
@@ -75,6 +75,6 @@ public interface AerialFishingTimersConfig extends Config
 	)
 	default Color getExpiringColor()
 	{
-		return Color.RED;
+		return new Color(255, 150, 30);
 	}
 }

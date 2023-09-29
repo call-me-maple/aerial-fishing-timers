@@ -1,6 +1,7 @@
 package callmemaple.aerialfishingtimers;
 
 import net.runelite.api.Client;
+import net.runelite.api.InventoryID;
 import net.runelite.api.NPC;
 import net.runelite.api.Perspective;
 import net.runelite.api.Point;
@@ -38,6 +39,12 @@ public class AerialFishingTimersOverlay extends Overlay
     @Override
     public Dimension render(Graphics2D graphics)
     {
+        // Don't render anything if the player isn't fishing
+        if (!plugin.isPlayingFishing(client.getItemContainer(InventoryID.EQUIPMENT)))
+        {
+            return null;
+        }
+
         Map<NPC, Instant> spots = plugin.getActiveFishingSpots();
         Instant now = Instant.now();
         float warningThreshold = (float) (SPOT_MIN_SPAWN_TICKS-config.getWarningThreshold()) / SPOT_MAX_SPAWN_TICKS;

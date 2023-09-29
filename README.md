@@ -1,2 +1,2 @@
 # Aerial Fishing Timers
-Adds timers to indicate when aerial fishing spots despawn
+Add timers to indicate when aerial fishing spots will expire.
