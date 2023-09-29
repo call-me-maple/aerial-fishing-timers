@@ -11,7 +11,7 @@ import java.awt.Color;
 @ConfigGroup("aerialfishingtimers")
 public interface AerialFishingTimersConfig extends Config
 {
-	@Range(max=100)
+	@Range(max=50)
 	@ConfigItem(
 		keyName = "circleSize",
 		name = "Circle Size",
@@ -27,19 +27,18 @@ public interface AerialFishingTimersConfig extends Config
 	@ConfigItem(
 			keyName = "warningThreshold",
 			name = "Warning Threshold",
-			description = "How many ticks before the RNG portion should the circle turn the warning color (0 for no warning)",
+			description = "How many ticks before the RNG expiration phase should the circle turn the warning color (0 for no warning)",
 			position = 2
 	)
 	default int getWarningThreshold()
 	{
-		return 4;
+		return 0;
 	}
 
 	@ConfigSection(
 			name = "Colors",
 			description = "",
-			position = 3,
-			closedByDefault = true
+			position = 3
 	) String colors = "colors";
 
 	@ConfigItem(
