@@ -7,10 +7,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
-import net.runelite.api.EquipmentInventorySlot;
-import net.runelite.api.Item;
-import net.runelite.api.ItemContainer;
-import net.runelite.api.ItemID;
 import net.runelite.api.NPC;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcDespawned;
@@ -102,24 +98,6 @@ public class AerialFishingTimersPlugin extends Plugin
 		// Remove any stored fishing spots if they should be expired by now
 		Instant now = Instant.now();
 		activeFishingSpots.values().removeIf(value -> Duration.between(now, value).compareTo(SPOT_MAX_SPAWN_DURATION) > 0);
-	}
-
-	public boolean isPlayingFishing(final ItemContainer itemContainer)
-	{
-		int weaponIndex = EquipmentInventorySlot.WEAPON.getSlotIdx();
-		Item weapon = itemContainer.getItem(weaponIndex);
-		if (weapon == null)
-		{
-			return false;
-		}
-		switch (weapon.getId())
-		{
-			case ItemID.CORMORANTS_GLOVE:
-			case ItemID.CORMORANTS_GLOVE_22817:
-				return true;
-			default:
-				return false;
-		}
 	}
 
 	@Provides

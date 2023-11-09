@@ -1,7 +1,11 @@
 package callmemaple.aerialfishingtimers;
 
 import net.runelite.api.Client;
+import net.runelite.api.EquipmentInventorySlot;
 import net.runelite.api.InventoryID;
+import net.runelite.api.Item;
+import net.runelite.api.ItemContainer;
+import net.runelite.api.ItemID;
 import net.runelite.api.NPC;
 import net.runelite.api.Perspective;
 import net.runelite.api.Point;
@@ -39,8 +43,8 @@ public class AerialFishingTimersOverlay extends Overlay
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        // Don't render anything if the player isn't fishing
-        if (!plugin.isPlayingFishing(client.getItemContainer(InventoryID.EQUIPMENT)))
+        // Don't render anything if the player isn't wearing the glove for aerial fishing
+        if (!isWearingGlove())
         {
             return null;
         }
@@ -89,5 +93,30 @@ public class AerialFishingTimersOverlay extends Overlay
         }
 
         return null;
+    }
+
+    private boolean isWearingGlove()
+    {
+        ItemContainer equipment = client.getItemContainer(InventoryID.EQUIPMENT);
+        if (equipment == null)
+        {
+            return false;
+        }
+
+        int weaponIndex = EquipmentInventorySlot.WEAPON.getSlotIdx();
+        Item weapon = equipment.getItem(weaponIndex);
+        if (weapon == null)
+        {
+            return false;
+        }
+
+        switch (weapon.getId())
+        {
+            case ItemID.CORMORANTS_GLOVE:
+            case ItemID.CORMORANTS_GLOVE_22817:
+                return true;
+            default:
+                return false;
+        }
     }
 }
