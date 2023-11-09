@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
+import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
@@ -51,7 +52,7 @@ public class AerialFishingTimersPlugin extends Plugin
 	private AerialFishingTimersOverlay overlay;
 
 	@Getter(AccessLevel.PACKAGE)
-	private final Map<NPC, Instant> activeFishingSpots = new HashMap<>();
+	private final Map<NPC, AerialFishingSpot> activeFishingSpots = new HashMap<>();
 
 	@Override
 	protected void startUp()
@@ -77,7 +78,7 @@ public class AerialFishingTimersPlugin extends Plugin
 			return;
 		}
 		// Store the npc and the time spawned
-		activeFishingSpots.put(npc, Instant.now());
+		activeFishingSpots.put(npc, new AerialFishingSpot(npc, Instant.now()));
 	}
 
 	@Subscribe
@@ -97,7 +98,21 @@ public class AerialFishingTimersPlugin extends Plugin
 	{
 		// Remove any stored fishing spots if they should be expired by now
 		Instant now = Instant.now();
-		activeFishingSpots.values().removeIf(value -> Duration.between(now, value).compareTo(SPOT_MAX_SPAWN_DURATION) > 0);
+		activeFishingSpots.values().removeIf(spot -> Duration.between(now, spot.getSpawnTime()).compareTo(SPOT_MAX_SPAWN_DURATION) > 0);
+	}
+
+	@Subscribe
+	public void onGameStateChanged(GameStateChanged event)
+	{
+		switch (event.getGameState())
+		{
+			case HOPPING:
+			case LOGGING_IN:
+				activeFishingSpots.clear();
+				break;
+			default:
+				break;
+		}
 	}
 
 	@Provides
