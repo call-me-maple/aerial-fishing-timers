@@ -16,9 +16,12 @@ import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.components.ProgressPieComponent;
 
 import javax.inject.Inject;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
+import java.awt.geom.Line2D;
 import java.time.Instant;
 import java.util.Map;
 
@@ -43,28 +46,36 @@ public class AerialFishingTimersOverlay extends Overlay
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        // Don't render anything if the player isn't wearing the glove for aerial fishing
+        // Don't render anything if the player isn't wearing the aerial fishing glove
         if (!isWearingGlove())
         {
             return null;
         }
 
-        Map<NPC, Instant> spots = plugin.getActiveFishingSpots();
+        Map<NPC, AerialFishingSpot> spots = plugin.getActiveFishingSpots();
         Instant now = Instant.now();
-        float warningThreshold = (float) (SPOT_MIN_SPAWN_TICKS-config.getWarningThreshold()) / SPOT_MAX_SPAWN_TICKS;
+        float warningThreshold = (SPOT_MIN_SPAWN_TICKS - config.getWarningThreshold()) / (float) SPOT_MAX_SPAWN_TICKS;
 
-        for (NPC spot : spots.keySet())
+        for (AerialFishingSpot spot : spots.values())
         {
-            LocalPoint location = spot.getLocalLocation();
+            LocalPoint location = spot.getNpc().getLocalLocation();
             if (location == null)
             {
                 continue;
             }
 
             // Calculate the percentage of the time into the fishing spot's availability
-            Instant spawnTime = spots.get(spot);
+            Instant spawnTime = spot.getSpawnTime();
             long maxRespawn = SPOT_MAX_SPAWN_DURATION.toMillis();
-            float percentProgress = (now.toEpochMilli() - spawnTime.toEpochMilli()) / (float) maxRespawn;
+            long sinceSpawn = now.toEpochMilli() - spawnTime.toEpochMilli();
+            float percentProgress = (float) sinceSpawn / maxRespawn;
+
+            // If using tick increment calculate progress by tick instead
+            if (config.getTickIncrement())
+            {
+                float millisPerTick = (SPOT_MAX_SPAWN_DURATION.toMillis() / (float) SPOT_MAX_SPAWN_TICKS);
+                percentProgress = (float) ((Math.floor(sinceSpawn / millisPerTick)) / SPOT_MAX_SPAWN_TICKS);
+            }
 
             // Find where to draw the indicator
             Point point = Perspective.localToCanvas(client, location, client.getPlane());
@@ -73,12 +84,17 @@ public class AerialFishingTimersOverlay extends Overlay
                 continue;
             }
 
+            if (config.getDrawExpirationLine() && percentProgress < SPOT_RANDOM_PERCENT_THRESHOLD)
+            {
+                drawExpirationLine(graphics, point);
+            }
+
             // Pick the corresponding fill color based on the progress
             Color pieFillColor = config.getAvailableColor();
-            if (percentProgress > SPOT_RANDOM_PERCENT_THRESHOLD)
+            if (percentProgress >= SPOT_RANDOM_PERCENT_THRESHOLD)
             {
                 pieFillColor = config.getExpiringColor();
-            } else if (percentProgress > warningThreshold)
+            } else if (percentProgress >= warningThreshold)
             {
                 pieFillColor = config.getWarningColor();
             }
@@ -93,6 +109,19 @@ public class AerialFishingTimersOverlay extends Overlay
         }
 
         return null;
+    }
+
+    private void drawExpirationLine(Graphics2D graphics, Point point)
+    {
+        // Covert to radians and add a 90 degrees offset so the top of the circle is 0 degrees
+        double theta = ((SPOT_RANDOM_PERCENT_THRESHOLD * 360) + 90) * Math.PI / 180;
+        double xOffset = (config.getCircleSize()/2f) * Math.cos(theta);
+        double yOffset = -1 * (config.getCircleSize()/2f) * Math.sin(theta);
+
+        Stroke dashedStroke = new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, new float[]{2f, 2f}, 1);
+        graphics.setStroke(dashedStroke);
+        graphics.setColor(config.getExpiringColor());
+        graphics.draw(new Line2D.Double(point.getX(), point.getY(), point.getX() + xOffset, point.getY() + yOffset));
     }
 
     private boolean isWearingGlove()

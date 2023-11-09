@@ -11,12 +11,34 @@ import java.awt.Color;
 @ConfigGroup("aerialfishingtimers")
 public interface AerialFishingTimersConfig extends Config
 {
-	@Range(max=50)
+	@ConfigItem(
+			keyName = "tickIncrement",
+			name = "Increment by Tick",
+			description = "This will have the circle increment every game tick instead of continuously",
+			position = 1
+	)
+	default boolean getTickIncrement()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			keyName = "drawExpirationLine",
+			name = "Draw Expiration Line",
+			description = "This will add a dotted line on each circle to indicate when a fishing spot could despawn",
+			position = 2
+	)
+	default boolean getDrawExpirationLine()
+	{
+		return false;
+	}
+
+	@Range(max=50, min=10)
 	@ConfigItem(
 		keyName = "circleSize",
 		name = "Circle Size",
 		description = "How big to make the circular timers",
-		position = 1
+		position = 3
 	)
 	default int getCircleSize()
 	{
@@ -28,7 +50,7 @@ public interface AerialFishingTimersConfig extends Config
 			keyName = "warningThreshold",
 			name = "Warning Threshold",
 			description = "Adds a warning phase X ticks before the final RNG expiration phase (0 to turn off)",
-			position = 2
+			position = 4
 	)
 	default int getWarningThreshold()
 	{
@@ -38,14 +60,14 @@ public interface AerialFishingTimersConfig extends Config
 	@ConfigSection(
 			name = "Colors",
 			description = "",
-			position = 3
+			position = 5
 	) String colors = "colors";
 
 	@ConfigItem(
 			keyName = "availableColor",
 			name = "Available Color",
 			description = "Color of the circle when the spot cannot expire",
-			position = 4,
+			position = 6,
 			section = colors
 	)
 	default Color getAvailableColor()
@@ -57,7 +79,7 @@ public interface AerialFishingTimersConfig extends Config
 			keyName = "warningColor",
 			name = "Warning Color",
 			description = "Color of the circle right before the RNG expiration phase",
-			position = 5,
+			position = 7,
 			section = colors
 	)
 	default Color getWarningColor()
@@ -69,7 +91,7 @@ public interface AerialFishingTimersConfig extends Config
 			keyName = "expiringColor",
 			name = "Expiring Color",
 			description = "Color of the circle when the spot may expire at any moment",
-			position = 6,
+			position = 8,
 			section = colors
 	)
 	default Color getExpiringColor()
